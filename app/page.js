@@ -17,7 +17,10 @@ export default function Home() {
             Get started by editing{" "}
             <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
               app/page.js
-            </code>>
+            </code>
+            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
+              app/page.js
+            </code>
             .
           </li>
           <li>Save and see your changes instantly.</li>
