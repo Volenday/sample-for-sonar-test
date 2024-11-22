@@ -1,12 +1,12 @@
 import Image from "next/image";
 
 // const password = 'asdasdasdasdsada';
-const ahamaticServiceAccount = {
-  apiKey: '881c0820-7a7a-11ec-b207-8dd119227be1',
-  emailAddress: 'developers@volenday.com',
-  password: 'V0l3nd@yP@ssw0rd',
-  rememberMe: true
-}
+// const ahamaticServiceAccount = {
+//   apiKey: '881c0820-7a7a-11ec-b207-8dd119227be1',
+//   emailAddress: 'developers@volenday.com',
+//   password: 'V0l3nd@yP@ssw0rd',
+//   rememberMe: true
+// }
 
 export default function Home() {
   return (
