@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "npm run sonar && next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "sonar": "node sonar.js"
   },
   "dependencies": {
     "next": "15.0.3",
