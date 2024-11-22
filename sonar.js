@@ -11,7 +11,7 @@ scanner(
       'sonar.organization': 'volenday', // Only for SonarCloud
       'sonar.sources': '.', // Analyze the current directory
       'sonar.exclusions': 'node_modules/**,.next/**,public/**,.github/**', // Exclude unnecessary directories
-      'sonar.javascript.lcov.reportPaths': 'coverage/lcov.info', // If using test coverage
+    //   'sonar.javascript.lcov.reportPaths': 'coverage/lcov.info', // If using test coverage
       'sonar.sourceEncoding': 'UTF-8',
     },
   },
