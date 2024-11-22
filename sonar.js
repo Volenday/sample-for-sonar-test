@@ -1,6 +1,6 @@
-const scanner = require('sonarqube-scanner');
+const sonarqubeScanner = require('sonarqube-scanner');
 
-scanner(
+sonarqubeScanner(
   {
     serverUrl: 'https://sonarcloud.io', // or your SonarQube server URL
     token: process.env.SONAR_TOKEN,
