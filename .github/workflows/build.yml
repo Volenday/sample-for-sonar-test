@@ -65,20 +65,20 @@ jobs:
   #     - name: Run tests
   #       run: npm test
 
-  deploy:
-    needs: sonarcloud
-    runs-on: ubuntu-latest
-    steps:
-      # Step 1: Checkout the code
-      - name: Checkout code
-        uses: actions/checkout@v3
+  # deploy:
+  #   needs: sonarcloud
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     # Step 1: Checkout the code
+  #     - name: Checkout code
+  #       uses: actions/checkout@v3
 
-      # Step 2: Deploy to Vercel
-      - name: Deploy to Vercel
-        uses: amondnet/vercel-action@v21
-        with:
-          vercel-token: ${{ secrets.VERCEL_TOKEN }}
-          vercel-args: '--prod'
-          working-directory: ./
-          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
-          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+  #     # Step 2: Deploy to Vercel
+  #     - name: Deploy to Vercel
+  #       uses: amondnet/vercel-action@v21
+  #       with:
+  #         vercel-token: ${{ secrets.VERCEL_TOKEN }}
+  #         vercel-args: '--prod'
+  #         working-directory: ./
+  #         vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+  #         vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
