@@ -1,33 +1,10 @@
-# name: Build
-# on:
-#   push:
-#     branches:
-#       - main
-#   pull_request:
-#     types: [opened, synchronize, reopened]
-# jobs:
-#   sonarcloud:
-#     name: SonarQube Cloud
-#     runs-on: ubuntu-latest
-#     steps:
-#       - uses: actions/checkout@v4
-#         with:
-#           fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
-#       - name: SonarQube Cloud Scan
-#         uses: SonarSource/sonarcloud-github-action@master
-#         env:
-#           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
-#           # SONAR_TOKEN: 7f43afbb9e84147d80cacad3e29726a8277b5cd6
-#           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-
-
 name: Build
-
 on:
   push:
     branches:
       - main
-
+  pull_request:
+    types: [opened, synchronize, reopened]
 jobs:
   sonarcloud:
     name: SonarQube Cloud
@@ -40,8 +17,8 @@ jobs:
         uses: SonarSource/sonarcloud-github-action@master
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
-          # SONAR_TOKEN: 7f43afbb9e84147d80cacad3e29726a8277b5cd6uwu
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }} 
+          # SONAR_TOKEN: 7f43afbb9e84147d80cacad3e29726a8277b5cd6
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
   # build-and-test:
   #   needs: sonarcloud
