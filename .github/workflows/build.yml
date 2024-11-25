@@ -1,10 +1,33 @@
-name: Build
+# name: Build
+# on:
+#   push:
+#     branches:
+#       - main
+#   pull_request:
+#     types: [opened, synchronize, reopened]
+# jobs:
+#   sonarcloud:
+#     name: SonarQube Cloud
+#     runs-on: ubuntu-latest
+#     steps:
+#       - uses: actions/checkout@v4
+#         with:
+#           fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+#       - name: SonarQube Cloud Scan
+#         uses: SonarSource/sonarcloud-github-action@master
+#         env:
+#           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
+#           # SONAR_TOKEN: 7f43afbb9e84147d80cacad3e29726a8277b5cd6
+#           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+
+name: Deploy to Vercel
+
 on:
   push:
     branches:
       - main
-  pull_request:
-    types: [opened, synchronize, reopened]
+
 jobs:
   sonarcloud:
     name: SonarQube Cloud
@@ -20,18 +43,42 @@ jobs:
           # SONAR_TOKEN: 7f43afbb9e84147d80cacad3e29726a8277b5cd6
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
-  # test:
-  #   name: Run Tests
-  #   runs-on: ubuntu-latest
-  #   needs: [sonarcloud]
+  build-and-test:
+    needs: sonarcloud
+    runs-on: ubuntu-latest
+    steps:
+      # Step 1: Checkout the code
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-  #   steps:
-  #     - uses: actions/checkout@v4
-  #     - name: Run tests
-  #       run: |
-  #         if [ -f docker-compose.test.yml ]; then
-  #           docker-compose --file docker-compose.test.yml build
-  #           docker-compose --file docker-compose.test.yml run sut
-  #         else
-  #           docker build . --file Dockerfile
-  #         fi
+      # Step 2: Set up Node.js
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+
+      # Step 3: Install dependencies
+      - name: Install dependencies
+        run: npm install
+
+      # Step 4: Run tests
+      - name: Run tests
+        run: npm test
+
+  deploy:
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    steps:
+      # Step 1: Checkout the code
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Step 2: Deploy to Vercel
+      - name: Deploy to Vercel
+        uses: amondnet/vercel-action@v21
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-args: '--prod'
+          working-directory: ./
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}

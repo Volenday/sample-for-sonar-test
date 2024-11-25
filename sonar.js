@@ -8,7 +8,7 @@ sonarqubeScanner.scan(
     options: {
       'sonar.projectKey': 'Volenday_sample-for-sonar-test',
       'sonar.organization': 'volenday', // Only for SonarCloud
-      'sonar.sources': '.', // Analyze the current directory
+    //   'sonar.sources': '.', // Analyze the current directory
       'sonar.exclusions': 'node_modules/**,.next/**,public/**,.github/**', // Exclude unnecessary directories
       'sonar.sourceEncoding': 'UTF-8',
     },
