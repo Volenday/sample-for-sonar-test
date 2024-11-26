@@ -83,49 +83,93 @@
   #         VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
   #       run: npx vercel deploy --prebuilt
 
-  name: Build
-  on:
-    push:
-      branches:
-        - main
-    pull_request: # Run tests for any PRs.
+  # name: Build
+  # on:
+  #   push:
+  #     branches:
+  #       - main
+  #   pull_request: # Run tests for any PRs.
 
-  jobs:
-    sonarcloud:
-      name: SonarQube Cloud
-      runs-on: ubuntu-latest
-      steps:
-        # Step 1: Checkout the code
-        - uses: actions/checkout@v4
-          with:
-            fetch-depth: 0  # Shallow clones should be disabled for better analysis relevance
+  # jobs:
+  #   sonarcloud:
+  #     name: SonarQube Cloud
+  #     runs-on: ubuntu-latest
+  #     steps:
+  #       # Step 1: Checkout the code
+  #       - uses: actions/checkout@v4
+  #         with:
+  #           fetch-depth: 0  # Shallow clones should be disabled for better analysis relevance
 
-        # Step 2: Install dependencies (e.g., jq)
-        - name: Install jq
-          run: sudo apt-get install -y jq
+  #       # Step 2: Install dependencies (e.g., jq)
+  #       - name: Install jq
+  #         run: sudo apt-get install -y jq
 
-        # Step 3: Run SonarCloud analysis
-        - name: SonarQube Cloud Scan
-          uses: SonarSource/sonarcloud-github-action@master
-          env:
-            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
-            SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+  #       # Step 3: Run SonarCloud analysis
+  #       - name: SonarQube Cloud Scan
+  #         uses: SonarSource/sonarcloud-github-action@master
+  #         env:
+  #           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
+  #           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
-        # Step 4: Check Quality Gate Status
-        - name: Check Quality Gate Status
-          run: |
-            # Fetch quality gate status
-            curl -s -u ${{ secrets.SONAR_TOKEN }}: \
-              "https://sonarcloud.io/api/qualitygates/project_status?projectKey=Volenday_sample-for-sonar-test" \
-              | jq -r '.projectStatus.status' > quality_gate_status.txt
+  #       # Step 4: Check Quality Gate Status
+  #       - name: Check Quality Gate Status
+  #         run: |
+  #           # Fetch quality gate status
+  #           curl -s -u ${{ secrets.SONAR_TOKEN }}: \
+  #             "https://sonarcloud.io/api/qualitygates/project_status?projectKey=Volenday_sample-for-sonar-test" \
+  #             | jq -r '.projectStatus.status' > quality_gate_status.txt
 
-            # Read and evaluate quality gate status
-            if [ "$(cat quality_gate_status.txt)" != "OK" ]; then
-              echo "Quality Gate failed. Failing the workflow."
-              exit 1
-            else
-              echo "Quality Gate passed."
-            fi
-          env:
-            SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }} 
+  #           # Read and evaluate quality gate status
+  #           if [ "$(cat quality_gate_status.txt)" != "OK" ]; then
+  #             echo "Quality Gate failed. Failing the workflow."
+  #             exit 1
+  #           else
+  #             echo "Quality Gate passed."
+  #           fi
+  #         env:
+  #           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }} 
 
+
+name: Build
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  sonarcloud:
+    name: SonarQube Cloud
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install jq
+        run: sudo apt-get install -y jq
+
+      - name: SonarQube Cloud Scan
+        uses: SonarSource/sonarcloud-github-action@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+      - name: Check Quality Gate Status
+        run: |
+          curl -s -u ${{ secrets.SONAR_TOKEN }}: \
+            "https://sonarcloud.io/api/qualitygates/project_status?projectKey=Volenday_sample-for-sonar-test" \
+            | jq -r '.projectStatus.status' > quality_gate_status.txt
+          if [ "$(cat quality_gate_status.txt)" != "OK" ]; then
+            echo "Quality Gate failed. Failing the workflow."
+            exit 1
+          else
+            echo "Quality Gate passed."
+          fi
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+      # Prevent deployment on failure
+      - name: Skip Vercel Deployment on Failure
+        if: failure()  # Only run if the previous steps failed
+        run: echo "VERCEL_SKIP_DEPLOYMENT=true" >> $GITHUB_ENV
