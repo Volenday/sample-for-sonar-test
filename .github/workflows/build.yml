@@ -156,20 +156,30 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
       - name: Check Quality Gate Status
+        id: quality_gate_check  # Add an ID to reference this step's outcome
         run: |
           curl -s -u ${{ secrets.SONAR_TOKEN }}: \
             "https://sonarcloud.io/api/qualitygates/project_status?projectKey=Volenday_sample-for-sonar-test" \
             | jq -r '.projectStatus.status' > quality_gate_status.txt
           if [ "$(cat quality_gate_status.txt)" != "OK" ]; then
-            echo "Quality Gate failed. Failing the workflow."
-            exit 1
+            echo "Quality Gate failed."
+            echo "failed" > quality_gate_status.out
           else
             echo "Quality Gate passed."
+            echo "passed" > quality_gate_status.out
           fi
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
-      # Prevent deployment on failure
-      - name: Skip Vercel Deployment on Failure
-        if: failure()  # Only run if the previous steps failed
-        run: echo "VERCEL_SKIP_DEPLOYMENT=true" >> $GITHUB_ENV
+      # Prevent deployment based on quality gate result
+      - name: Skip Vercel Deployment
+        run: |
+          QUALITY_GATE_STATUS=$(cat quality_gate_status.out)
+          if [ "$QUALITY_GATE_STATUS" = "failed" ]; then
+            echo "VERCEL_SKIP_DEPLOYMENT=true" >> $GITHUB_ENV
+            echo "Skipping Vercel deployment because the quality gate failed."
+            exit 1  # Fail the workflow
+          else
+            echo "Quality Gate passed. Proceeding with deployment."
+          fi
+
