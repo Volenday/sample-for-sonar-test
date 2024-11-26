@@ -95,25 +95,37 @@
       name: SonarQube Cloud
       runs-on: ubuntu-latest
       steps:
+        # Step 1: Checkout the code
         - uses: actions/checkout@v4
           with:
-            fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+            fetch-depth: 0  # Shallow clones should be disabled for better analysis relevance
 
+        # Step 2: Install dependencies (e.g., jq)
+        - name: Install jq
+          run: sudo apt-get install -y jq
+
+        # Step 3: Run SonarCloud analysis
         - name: SonarQube Cloud Scan
           uses: SonarSource/sonarcloud-github-action@master
           env:
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
             SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
-        # Check Quality Gate Status
+        # Step 4: Check Quality Gate Status
         - name: Check Quality Gate Status
           run: |
+            # Fetch quality gate status
             curl -s -u ${{ secrets.SONAR_TOKEN }}: \
               "https://sonarcloud.io/api/qualitygates/project_status?projectKey=<your_project_key>" \
               | jq -r '.projectStatus.status' > quality_gate_status.txt
+
+            # Read and evaluate quality gate status
             if [ "$(cat quality_gate_status.txt)" != "OK" ]; then
               echo "Quality Gate failed. Failing the workflow."
               exit 1
+            else
+              echo "Quality Gate passed."
             fi
           env:
             SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
