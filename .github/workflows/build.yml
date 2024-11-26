@@ -43,25 +43,25 @@ jobs:
   #     - name: Run tests
   #       run: npm test
 
-  deploy:
-    runs-on: ubuntu-latest
-    needs: sonarcloud  # Ensure this only runs if 'sonarcloud' succeeds
-    # if: success()      # Additional safety check to ensure prior steps succeeded
-    if: github.event_name == 'push'
-    steps:
-      # Step 1: Checkout the code
-      - name: Checkout code
-        uses: actions/checkout@v3
+  # deploy:
+  #   runs-on: ubuntu-latest
+  #   needs: sonarcloud  # Ensure this only runs if 'sonarcloud' succeeds
+  #   # if: success()      # Additional safety check to ensure prior steps succeeded
+  #   if: github.event_name == 'push'
+  #   steps:
+  #     # Step 1: Checkout the code
+  #     - name: Checkout code
+  #       uses: actions/checkout@v3
 
-      # Step 2: Deploy to Vercel
-      - name: Deploy to Vercel
-        uses: amondnet/vercel-action@v25
-        with:
-          vercel-token: ${{ secrets.VERCEL_TOKEN }}
-          vercel-args: '--prod'
-          working-directory: ./
-          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
-          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+  #     # Step 2: Deploy to Vercel
+  #     - name: Deploy to Vercel
+  #       uses: amondnet/vercel-action@v25
+  #       with:
+  #         vercel-token: ${{ secrets.VERCEL_TOKEN }}
+  #         vercel-args: '--prod'
+  #         working-directory: ./
+  #         vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+  #         vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
 
   # # Step 2: Build and Deploy to Vercel (only if SonarCloud passes)
   # vercel:
