@@ -116,7 +116,7 @@
           run: |
             # Fetch quality gate status
             curl -s -u ${{ secrets.SONAR_TOKEN }}: \
-              "https://sonarcloud.io/api/qualitygates/project_status?projectKey=<your_project_key>" \
+              "https://sonarcloud.io/api/qualitygates/project_status?projectKey=Volenday_sample-for-sonar-test" \
               | jq -r '.projectStatus.status' > quality_gate_status.txt
 
             # Read and evaluate quality gate status
